@@ -44,8 +44,9 @@ def get_names(df, query, exclude):
         corr2 = np.array([temp[x]==1.0 for x in exclude]).T
         temp["yes"] = [int(x.all()) for x in corr]
         temp["no"] = [int(x.all()) for x in corr2]
-        temp["decide"] = temp["yes"]*temp["no"]
-        return temp[temp["decide"]==1]["Title"].values
+
+        temp = temp[(temp["yes"] == 1) & (temp["no"] == 1)]
+        return temp["Title"].values
     else:
         query.append("Title")
         temp = df[query]

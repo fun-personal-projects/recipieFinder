@@ -1,7 +1,7 @@
 import pandas as pd
 from pathlib import Path
 from argparse import ArgumentParser
-from backbone import generate_merged_csv, read_data
+from backbone import generate_merged_csv, read_data, find_ingredients
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -10,6 +10,8 @@ ar.add_argument("-p", help="Path to dataset", default="/media/hdd/Datasets/culin
 ar.add_argument("-l", help="Only list all ingredients present", action="store_true")
 ar.add_argument("-i", help="Comma separated list of items to add", required=True)
 ar.add_argument("-e", help="Comma separated list of items to exclude")
+ar.add_argument("-f", help="Find exact name")
+
 ap = ar.parse_args()
 
 print("Reading data")
@@ -20,6 +22,7 @@ if not Path.exists(main_path): generate_merged_csv(ap.p)
 # Read it
 df = pd.read_csv(main_path)
 if ap.l: print(list(df.columns)[3:-1])
+if ap.f!= None: find_ingredients(df, ap.f)
 else:
     read_data(df, ap.i, ap.e)
 

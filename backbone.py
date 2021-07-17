@@ -36,16 +36,17 @@ def generate_merged_csv(mainpath= "/media/hdd/Datasets/culinarydb"):
 
 def get_names(df, query, exclude):
     # Get names of the recipies you can make
-    if len(exclude)>0: #logic is broken so far
+    if len(exclude)>0: 
+        query1 = query.copy()
         query.extend(exclude)
         query.append("Title")
-        temp = df[query]
-        corr = np.array([temp[x]==1.0 for x in query[:-1]]).T
+        temp = df[query].copy()
+        corr = np.array([temp[x]==1.0 for x in query1]).T
         corr2 = np.array([temp[x]==1.0 for x in exclude]).T
         temp["yes"] = [int(x.all()) for x in corr]
         temp["no"] = [int(x.all()) for x in corr2]
-
-        temp = temp[(temp["yes"] == 1) & (temp["no"] == 1)]
+        temp = temp.fillna(0.0)
+        temp = temp[(temp["yes"] == 1.0) & (temp["no"] == 0.0)]
         return temp["Title"].values
     else:
         query.append("Title")
@@ -66,3 +67,10 @@ def read_data(df, include, exclude):
     df = df.fillna(0)
     listed = get_names(df, preprocess(include), preprocess(exclude))
     print(f"{len(listed)} Recipies found \n{listed}")
+
+def find_ingredients(df, name):
+    df_t = df[df["Title"] == name]
+    df_t = df_t.loc[:, (df_t != 0).any(axis=0)]
+    print(df_t)
+
+    
